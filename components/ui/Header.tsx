@@ -1,9 +1,9 @@
-"use client";
-import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+'use client';
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 const Header = () => {
   const pathname = usePathname();
@@ -16,9 +16,9 @@ const Header = () => {
         <nav>
           <Link
             href="/"
-            className={cn("nav-link", {
-              "is-active": pathname === "/",
-              "is-home": true,
+            className={cn('nav-link', {
+              'is-active': pathname === '/',
+              'is-home': true,
             })}
           >
             Home
@@ -28,8 +28,8 @@ const Header = () => {
 
           <Link
             href="/coins"
-            className={cn("nav-link", {
-              "is-active": pathname === "/coins",
+            className={cn('nav-link', {
+              'is-active': pathname === '/coins',
             })}
           >
             All Coins
