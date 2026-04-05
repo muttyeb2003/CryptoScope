@@ -22,7 +22,6 @@ const CandlestickChart = ({
   height = 360,
   initialPeriod = 'daily',
 }: CandlestickChartProps) => {
-  const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState(initialPeriod);
   const [ohlcData, setOhlcData] = useState<OHLCData[]>(data ?? []);
   const [isPending, startTransition] = useTransition();
@@ -45,10 +44,13 @@ const CandlestickChart = ({
       if (selectPeriod === 'max') {
         try {
           console.log('Retrying with yearly (365 days) fallback...');
-          const fallbackData = await fetcher<OHLCData[]>(`coins/${coinId}/ohlc`, {
-            vs_currency: 'usd',
-            days: 365,
-          });
+          const fallbackData = await fetcher<OHLCData[]>(
+            `coins/${coinId}/ohlc`,
+            {
+              vs_currency: 'usd',
+              days: 365,
+            }
+          );
           setOhlcData(fallbackData ?? []);
         } catch (fallbackError) {
           console.error('Fallback fetch failed for max period:', fallbackError);
@@ -77,7 +79,17 @@ const CandlestickChart = ({
     });
     const series = chart.addSeries(CandlestickSeries, getCandlestickConfig());
 
-    series.setData(convertOHLCData(ohlcData));
+    const convertedToSeconds = ohlcData.map(
+      (item) =>
+        [
+          Math.floor(item[0] / 1000),
+          item[1],
+          item[2],
+          item[3],
+          item[4],
+        ] as OHLCData
+    );
+    series.setData(convertOHLCData(convertedToSeconds));
     chart.timeScale().fitContent();
 
     chartRef.current = chart;
@@ -95,7 +107,7 @@ const CandlestickChart = ({
       chartRef.current = null;
       candleSeriesRef.current = null;
     };
-  }, [height]);
+  }, [height, period]);
 
   useEffect(() => {
     if (!candleSeriesRef.current) return;
@@ -133,7 +145,7 @@ const CandlestickChart = ({
                 onClick={() => {
                   handlePeriodChange(value);
                 }}
-                disabled={loading}
+                disabled={isPending}
               >
                 {label}
               </button>
