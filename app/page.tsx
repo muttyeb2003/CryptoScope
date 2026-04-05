@@ -5,9 +5,9 @@ import { Divide, TrendingDown, TrendingUp } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 import { fetcher } from '@/lib/coingecko.actions';
-import CoinOverview from '@/components/ui/home/CoinOverview';
-import TrendingCoins from '@/components/ui/home/TrendingCoins';
-import { CoinOverviewFallback,TrendingCoinsFallback } from '@/components/ui/home/fallback';
+import CoinOverview from '@/components/home/CoinOverview';
+import TrendingCoins from '@/components/home/TrendingCoins';
+import { CoinOverviewFallback,TrendingCoinsFallback } from '@/components/home/fallback';
 
 const columns: DataTableColumn<TrendingCoin>[] = [
   {

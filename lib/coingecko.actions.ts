@@ -29,10 +29,17 @@ export async function fetcher<T>(
   });
 
   if (!response.ok) {
-    const errorBody: CoinGeckoErrorBody = await response.json().catch();
+    let errorBody: CoinGeckoErrorBody | null = null;
+    try {
+      errorBody = await response.json();
+    } catch {
+      errorBody = null;
+    }
 
     throw new Error(
-      `API Error: ${response.status}: ${errorBody.error || response.statusText}`
+      `API Error: ${response.status}: ${
+        errorBody?.error || response.statusText
+      }`
     );
   }
   return response.json();
