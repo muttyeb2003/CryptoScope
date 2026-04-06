@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 import DataTable from '@/components/ui/DataTable';
-import { cn, formatCurrency, formatPercentage } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 import { TrendingCoinsFallback } from './fallback';
 
 const TrendingCoins = async () => {
@@ -50,9 +50,7 @@ const TrendingCoins = async () => {
             ) : (
               <TrendingDown width={16} height={16} />
             )}
-            <p>
-              {formatPercentage(coin.item.data.price_change_percentage_24h.usd)}
-            </p>
+            <p>{Math.abs(change).toFixed(2)}%</p>
           </div>
         );
       },
@@ -66,13 +64,12 @@ const TrendingCoins = async () => {
   return (
     <div id="trending-coins">
       <h4>Trending Coins</h4>
-      <div className="bg-white/4 backdrop-blur-sm overflow-hidden">
+      <div className="bg-white/4 backdrop-blur-sm rounded-xl overflow-hidden">
         <DataTable
           data={trendingCoins.coins.slice(0, 6)}
           columns={columns}
           rowKey={(coin) => coin.item.id}
           tableClassName="trending-coins-table"
-          headerRowClassName="bg-sky-500/10"
           headerCellClassName="py-3!"
           bodyCellClassName="py-2"
         />

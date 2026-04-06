@@ -282,7 +282,7 @@ interface DataTableProps<T> {
   headerClassName?: string;
   headerRowClassName?: string;
   headerCellClassName?: string;
-  bodyRowClassName?: string;
+  bodyRowClassName?: string | ((row: T, index: number) => string);
   bodyCellClassName?: string;
 }
 
