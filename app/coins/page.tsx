@@ -1,0 +1,104 @@
+import { fetcher } from '@/lib/coingecko.actions';
+import DataTable from '@/components/ui/DataTable';
+import Image from 'next/image';
+import Link from 'next/link';
+import { cn, formatPercentage, formatCurrency } from '@/lib/utils';
+import CoinPagination from '@/components/CoinPagination';
+
+const Coins = async ({ searchParams }: NextPageProps) => {
+  const resolvedSearchParams = await searchParams;
+  const currentPage = Number(resolvedSearchParams?.page) || 1;
+  const perPage = 10;
+
+  const coinsData = await fetcher<CoinMarketData[]>('coins/markets', {
+    vs_currency: 'usd',
+    order: 'market_cap_desc',
+    sparkline: 'false',
+    price_change_percentage: '24h',
+    per_page: perPage,
+    page: currentPage,
+  });
+
+  const columns: DataTableColumn<CoinMarketData>[] = [
+    {
+      header: 'Rank',
+      cellClassName: 'rank-cell',
+      cell: (coin) => (
+        <div className="flex items-center gap-2">
+          <span>#{coin.market_cap_rank}</span>
+          <Link href={`/coins/${coin.id}`} aria-label={`View ${coin.name}`} />
+        </div>
+      ),
+    },
+    {
+      header: 'Token',
+      cellClassName: 'token-cell',
+      cell: (coin) => (
+        <div className="token-info">
+          <Image src={coin.image} alt={coin.name} width={36} height={36} />
+          <p>
+            {coin.name} ({coin.symbol.toUpperCase()})
+          </p>
+        </div>
+      ),
+    },
+    {
+      header: 'Price',
+      cellClassName: 'price-cell',
+      cell: (coin) => formatCurrency(coin.current_price),
+    },
+    {
+      header: '24h Change',
+      cellClassName: 'change-cell',
+      cell: (coin) => {
+        const isTrendingUp = coin.price_change_percentage_24h > 0;
+
+        return (
+          <span
+            className={cn('change-value', {
+              'text-green-600': isTrendingUp,
+              'text-red-500': !isTrendingUp,
+            })}
+          >
+            {isTrendingUp && '+'}
+            {formatPercentage(coin.price_change_percentage_24h)}
+          </span>
+        );
+      },
+    },
+    {
+      header: 'Market Cap',
+      cellClassName: 'market-cap-cell',
+      cell: (coin) => formatCurrency(coin.market_cap),
+    },
+  ];
+
+  const hasMorePages = coinsData.length === perPage;
+
+  const estimatedTotalPages =
+    currentPage >= 100 ? Math.ceil(currentPage / 100) * 100 + 100 : 100;
+
+  return (
+    <main id="coins-page">
+      <div className="content">
+        <h4>All Coins</h4>
+
+        <DataTable
+          tableClassName="coins-table"
+          columns={columns}
+          data={coinsData}
+          rowKey={(coin) => coin.id}
+          headerRowClassName="bg-sky-500/10"
+        />
+
+        <CoinPagination
+          currentPage={currentPage}
+          totalPages={estimatedTotalPages}
+          hasMorePages={hasMorePages}
+        />
+      </div>
+    </main>
+  );
+};
+
+export default Coins;

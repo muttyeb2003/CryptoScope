@@ -7,7 +7,12 @@ import Link from 'next/link';
 import { fetcher } from '@/lib/coingecko.actions';
 import CoinOverview from '@/components/home/CoinOverview';
 import TrendingCoins from '@/components/home/TrendingCoins';
-import { CoinOverviewFallback,TrendingCoinsFallback } from '@/components/home/fallback';
+import {
+  CoinOverviewFallback,
+  TrendingCoinsFallback,
+  CategoriesFallback,
+} from '@/components/ui/home/fallback';
+import Categories from '@/components/home/Categories';
 
 const columns: DataTableColumn<TrendingCoin>[] = [
   {
@@ -63,16 +68,18 @@ const page = async () => {
   return (
     <main className="main-container">
       <section className="home-grid">
-        <Suspense fallback={<CoinOverviewFallback/>}>
+        <Suspense fallback={<CoinOverviewFallback />}>
           <CoinOverview></CoinOverview>
         </Suspense>
 
-        <Suspense fallback={<TrendingCoinsFallback/>}>
+        <Suspense fallback={<TrendingCoinsFallback />}>
           <TrendingCoins></TrendingCoins>
         </Suspense>
       </section>
       <section className="w-full mt-7 space-y-4">
-        <p>Categories</p>
+        <Suspense fallback={<CategoriesFallback />}>
+          <Categories />
+        </Suspense>
       </section>
     </main>
   );

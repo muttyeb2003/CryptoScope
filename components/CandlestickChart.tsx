@@ -128,33 +128,40 @@ const CandlestickChart = ({
   }, [ohlcData, period]);
 
   return (
-    <>
-      <div id="candlestick-chart">
-        <div className="chart-header">
-          <div className="flex-1">{children}</div>
-          <div className="button-group">
-            <span className="text-sm mx-2 font-medium text-purple-100/50">
-              Period:
-            </span>
-            {PERIOD_BUTTONS.map(({ value, label }) => (
-              <button
-                key={value}
-                className={
-                  period === value ? 'config-button-active' : 'config-button'
-                }
-                onClick={() => {
-                  handlePeriodChange(value);
-                }}
-                disabled={isPending}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+    <div
+      id="candlestick-chart"
+      className="w-full overflow-hidden rounded-xl bg-dark-500 p-3"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="flex-1 min-w-0">{children}</div>
+        <div className="flex gap-1 xl:gap-2 items-center">
+          <span className="text-sm mx-2 font-medium text-purple-100/50">
+            Period:
+          </span>
+          {PERIOD_BUTTONS.map(({ value, label }) => (
+            <button
+              key={value}
+              className={
+                period === value ? 'config-button-active' : 'config-button'
+              }
+              onClick={() => {
+                handlePeriodChange(value);
+              }}
+              disabled={isPending}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
-      <div ref={chartContainerRef} className="chart" style={{ height }} />
-    </>
+      <div className="w-full overflow-hidden rounded-xl bg-dark-500">
+        <div
+          ref={chartContainerRef}
+          className="w-full"
+          style={{ width: '100%', height, boxSizing: 'border-box' }}
+        />
+      </div>
+    </div>
   );
 };
 
