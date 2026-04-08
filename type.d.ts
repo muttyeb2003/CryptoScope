@@ -193,9 +193,10 @@ interface CoinDetailsData {
     }
   >;
   image: {
-    large: string;
-    small: string;
-  };
+  large: string;
+  small: string;
+  thumb?: string;
+};
   market_data: {
     current_price: {
       usd: number;
