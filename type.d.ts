@@ -193,10 +193,10 @@ interface CoinDetailsData {
     }
   >;
   image: {
-  large: string;
-  small: string;
-  thumb?: string;
-};
+    large: string;
+    small: string;
+    thumb?: string;
+  };
   market_data: {
     current_price: {
       usd: number;
@@ -223,15 +223,15 @@ interface CoinDetailsData {
     en: string;
   };
   links: {
-  homepage: string[];
-  blockchain_site: string[];
-  subreddit_url: string | null;
+    homepage: string[];
+    blockchain_site: string[];
+    subreddit_url: string | null;
 
-  official_forum_url?: (string | null)[];
-  repos_url?: {
-    github?: (string | null)[];
+    official_forum_url?: (string | null)[];
+    repos_url?: {
+      github?: (string | null)[];
+    };
   };
-};
   tickers: Ticker[];
 }
 
@@ -329,7 +329,9 @@ interface PoolData {
   name: string;
   network: string;
 }
-d: string) => void;
+interface SearchItemProps {
+  coin: SearchItemCoin;
+  onSelect: (coinId: string) => void;
   isActiveName: boolean;
 }
 
