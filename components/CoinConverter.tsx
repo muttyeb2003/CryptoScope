@@ -53,16 +53,20 @@ const CoinConverter = ({ symbol, name, image, prices = {} }: Props) => {
   const handleSwap = () => {
     setAmount(Number(convertedValue.toFixed(6)));
     setIsCoinToCurrency((prev) => !prev);
+    setIsDropdownOpen(false);
   };
+
+  const displayAmount = Number.isFinite(amount) ? amount : 0;
 
   return (
     <div className="rounded-2xl bg-dark-500 p-5 space-y-4">
+      {/* TOP / INPUT ROW */}
       <div className="flex items-center justify-between rounded-2xl bg-dark-400 px-4 py-4 gap-4">
         <input
           type="number"
           min="0"
           step="any"
-          value={Number.isFinite(amount) ? amount : ''}
+          value={displayAmount === 0 ? '' : amount}
           onChange={(e) => {
             const value = e.target.value;
 
@@ -80,40 +84,74 @@ const CoinConverter = ({ symbol, name, image, prices = {} }: Props) => {
           className="w-full bg-transparent text-lg font-medium outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Image
-            src={image}
-            alt={name}
-            width={20}
-            height={20}
-            className="rounded-full"
-          />
-          <span className="text-sm font-medium uppercase">
-            {isCoinToCurrency ? symbol : selectedCurrency}
-          </span>
+        <div ref={dropdownRef} className="relative shrink-0">
+          {isCoinToCurrency ? (
+            <div className="flex items-center gap-2">
+              <Image
+                src={image}
+                alt={name}
+                width={20}
+                height={20}
+                className="rounded-full"
+              />
+              <span className="text-sm font-medium uppercase">{symbol}</span>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                className="flex items-center gap-2 rounded-xl px-2 py-1 text-sm font-medium uppercase text-purple-100/70 transition-colors hover:bg-dark-500"
+              >
+                <span>{selectedCurrency}</span>
+                <span
+                  className={`text-xs transition-transform duration-200 ${
+                    isDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                >
+                  ▼
+                </span>
+              </button>
+
+              {isDropdownOpen && (
+                <div className="absolute right-0 top-full z-50 mt-2 max-h-56 w-32 overflow-y-auto rounded-2xl border border-purple-100/10 bg-dark-500 p-2 shadow-lg shadow-black/30 custom-scrollbar">
+                  {currencyKeys.map((currency) => (
+                    <button
+                      key={currency}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCurrency(currency);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-sm font-medium uppercase transition-colors ${
+                        selectedCurrency === currency
+                          ? 'bg-dark-400 text-white'
+                          : 'text-purple-100/70 hover:bg-dark-400 hover:text-white'
+                      }`}
+                    >
+                      {currency}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
+      {/* SWAP BUTTON */}
       <div className="flex justify-center">
         <button
           type="button"
           onClick={handleSwap}
           aria-label="Swap conversion direction"
-          className="
-      flex h-12 w-12 items-center justify-center
-      rounded-full
-      bg-dark-400
-      text-purple-100/70
-      transition-all duration-200
-      hover:scale-105
-      hover:bg-dark-500
-      active:scale-95
-    "
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-dark-400 text-purple-100/70 transition-all duration-200 hover:scale-105 hover:bg-dark-500 active:scale-95"
         >
           <Repeat size={22} strokeWidth={2} />
         </button>
       </div>
 
+      {/* BOTTOM / OUTPUT ROW */}
       <div className="flex items-center justify-between rounded-2xl bg-dark-400 px-4 py-4 gap-4">
         <span className="text-lg font-medium truncate">
           {convertedValue.toLocaleString(undefined, {
@@ -122,44 +160,57 @@ const CoinConverter = ({ symbol, name, image, prices = {} }: Props) => {
           })}
         </span>
 
-        <div ref={dropdownRef} className="relative shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsDropdownOpen((prev) => !prev)}
-            className="flex items-center gap-2 rounded-xl px-2 py-1 text-sm font-medium uppercase text-purple-100/70 transition-colors hover:bg-dark-500"
-          >
-            <span>{isCoinToCurrency ? selectedCurrency : symbol}</span>
-            <span
-              className={`text-xs transition-transform duration-200 ${
-                isDropdownOpen ? 'rotate-180' : ''
-              }`}
+        {isCoinToCurrency ? (
+          <div ref={dropdownRef} className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              className="flex items-center gap-2 rounded-xl px-2 py-1 text-sm font-medium uppercase text-purple-100/70 transition-colors hover:bg-dark-500"
             >
-              ▼
-            </span>
-          </button>
+              <span>{selectedCurrency}</span>
+              <span
+                className={`text-xs transition-transform duration-200 ${
+                  isDropdownOpen ? 'rotate-180' : ''
+                }`}
+              >
+                ▼
+              </span>
+            </button>
 
-          {isDropdownOpen && (
-            <div className="absolute right-0 top-full z-50 mt-2 max-h-56 w-32 overflow-y-auto rounded-2xl border border-purple-100/10 bg-dark-500 p-2 shadow-lg shadow-black/30 custom-scrollbar">
-              {currencyKeys.map((currency) => (
-                <button
-                  key={currency}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCurrency(currency);
-                    setIsDropdownOpen(false);
-                  }}
-                  className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-sm font-medium uppercase transition-colors ${
-                    selectedCurrency === currency
-                      ? 'bg-dark-400 text-white'
-                      : 'text-purple-100/70 hover:bg-dark-400 hover:text-white'
-                  }`}
-                >
-                  {currency}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-full z-50 mt-2 max-h-56 w-32 overflow-y-auto rounded-2xl border border-purple-100/10 bg-dark-500 p-2 shadow-lg shadow-black/30 custom-scrollbar">
+                {currencyKeys.map((currency) => (
+                  <button
+                    key={currency}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCurrency(currency);
+                      setIsDropdownOpen(false);
+                    }}
+                    className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-sm font-medium uppercase transition-colors ${
+                      selectedCurrency === currency
+                        ? 'bg-dark-400 text-white'
+                        : 'text-purple-100/70 hover:bg-dark-400 hover:text-white'
+                    }`}
+                  >
+                    {currency}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 shrink-0">
+            <Image
+              src={image}
+              alt={name}
+              width={20}
+              height={20}
+              className="rounded-full"
+            />
+            <span className="text-sm font-medium uppercase">{symbol}</span>
+          </div>
+        )}
       </div>
     </div>
   );
