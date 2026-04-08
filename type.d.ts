@@ -222,10 +222,15 @@ interface CoinDetailsData {
     en: string;
   };
   links: {
-    homepage: string[];
-    blockchain_site: string[];
-    subreddit_url: string;
+  homepage: string[];
+  blockchain_site: string[];
+  subreddit_url: string | null;
+
+  official_forum_url?: (string | null)[];
+  repos_url?: {
+    github?: (string | null)[];
   };
+};
   tickers: Ticker[];
 }
 
@@ -308,6 +313,22 @@ type SearchItemCoin = SearchCoin | TrendingCoin['item'];
 interface SearchItemProps {
   coin: SearchItemCoin;
   onSelect: (coinId: string) => void;
+  isActiveName: boolean;
+}
+
+interface CoinGeckoErrorBody {
+  error?: string;
+}
+
+type QueryParams = Record<string, string | number | boolean | undefined>;
+
+interface PoolData {
+  id: string;
+  address: string;
+  name: string;
+  network: string;
+}
+d: string) => void;
   isActiveName: boolean;
 }
 
